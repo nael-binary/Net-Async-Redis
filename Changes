@@ -1,0 +1,207 @@
+Revision history for Net-Async-Redis
+
+2.002_001 2020-04-03 22:02:06+08:00 Asia/Kuala_Lumpur (TRIAL RELEASE)
+    New features:
+
+    - Redis cluster support, https://redis.io/topics/cluster-spec
+    - updated to latest Redis 5.x commands
+
+2.001     2019-07-22 13:36:07+08:00 Asia/Kuala_Lumpur
+    New features:
+
+    - improved performance when issuing many Redis commands at once
+    - ->watch_keyspace now provides a Ryu::Source instance
+    - latest command parameters from redis.io (ABSTTL etc. for `restore`
+    and TYPE for `scan`)
+
+    New examples:
+
+    - moving-window sum
+
+2.000     2019-06-16 22:44:26+08:00 Asia/Kuala_Lumpur
+    New features:
+
+    - now requires Future::AsyncAwait
+
+1.014     2019-02-04 02:05:21+08:00 Asia/Kuala_Lumpur
+    New features:
+
+    - increase default buffer sizes from 8KB to 1MB, to improve efficiency
+    in the common case where there are only a few active Redis connections
+    - support configurable buffer sizes via `stream_read_len` / `stream_write_len`
+
+    New examples:
+
+    - `incr-ratelimit-aa.pl` and `consumer-groups-aa.pl` for Future::AsyncAwait basic
+    examples
+
+    Bugs fixed:
+
+    - the example for `->subscription` was wrong, thanks to Michael Mueller for catching
+    and patching!
+    - retain completion Future when executing commands
+
+1.013     2018-12-10 02:03:19+08:00 Asia/Kuala_Lumpur
+    New features:
+
+    - support for `NOACK` and type parameter for `client_kill`, as provided in
+    latest Redis 5.x release
+
+1.012     2018-10-19 11:03:35+08:00 Asia/Kuala_Lumpur
+    No new features.
+
+    Examples:
+
+    - Improved documentation for consumer-groups.pl example
+    (tested against 5.0 release)
+
+1.011     2018-10-06 20:50:12+08:00 Asia/Kuala_Lumpur
+    No new features.
+
+    Bug fixes:
+
+    - error handling improved, previously requests were not marked as failed
+    - protocol handling for 'undef' arrays (treated as `undef` now)
+
+    Examples:
+
+    - consumer-groups.pl example for XADD/XREADGROUP
+
+1.010     2018-10-06 15:26:00+08:00 Asia/Kuala_Lumpur
+    New commands:
+
+    - CLIENT ID
+    - CLIENT UNBLOCK
+
+    from Redis 5.0rc5.
+
+1.009     2018-10-03 19:26:59+08:00 Asia/Kuala_Lumpur
+    Updated to latest Redis 5.0 commands from last RC prior to 5.0 release.
+
+1.008     2018-09-27 11:28:37+08:00 Asia/Kuala_Lumpur
+    No new features.
+
+    Bug fixes:
+
+    - The connection was cached even if connection failed/interrupted so reconnecting
+    attempts were failing as well, now the connection object will get deleted on failure
+    - Subscriptions were not cancelled when the connection being interrupted,
+    now they are cancelled properly
+
+    (thanks to Eyad Arnabeh for reporting and fixing)
+
+1.007     2018-09-05 10:11:44+08:00 Asia/Kuala_Lumpur
+    No new features.
+
+    Bug fixes:
+
+    - Support auth parameter, rather than insisting on auth information be passed as
+    part of the URI (thanks to Nael Alolwani for reporting)
+    - "Pipeline depth" notifications were logged at `info` level, these are an internal
+    diagnostic and not useful for application code, these are now `trace` level messages
+
+1.006     2018-07-12 22:39:10+08:00 Asia/Kuala_Lumpur
+    No new features.
+
+    Bug fixes:
+
+    - PSUBSCRIBE wasn't working (reported by Bill Marriott and leonerd, fix+tests by leonerd,
+    I did little more than hit the merge button - thanks!)
+
+    Dependencies:
+
+    - Math::Random::Secure dep was missing (thanks MANWAR!)
+
+1.005     2018-01-06 18:18:22+08:00 Asia/Kuala_Lumpur
+    No new features.
+
+    Dependencies:
+
+    - Class::Method::Modifiers, and make sure we have a recent version of Future.pm
+
+1.004     2017-12-29 20:10:42+08:00 Asia/Kuala_Lumpur
+    No new features.
+
+    Performance improvements:
+
+    - DISCARD/EXEC are now pipelined, we don't need to wait for the
+    write before sending more commands
+
+
+1.003     2017-12-26 18:00:36+08:00 Asia/Kuala_Lumpur
+    New features:
+
+    - support queuing for MULTI and other commands
+    - support for passing a Redis URI
+    - minor performance improvements in protocol implementation and event handling
+
+    Bugs fixed:
+
+    - it was possible for cancelled/failed items within ->multi to cause the protocol
+    handling to go out of sync, this is now fixed.
+    - multi-word commands were generated incorrectly, these now work again
+
+    Examples:
+
+    - `examples/job-hash-worker.pl` - reliable priority-queue worker with job
+    details in separate hash key
+    - `examples/job-hash-submit.pl` - submit requests for priority-queue workers
+
+
+1.002     2017-12-11 06:06:47+08:00 Asia/Kuala_Lumpur
+    Dependencies:
+
+    - Explicit Log::Any dependency to ensure that context support is available
+
+    New features:
+
+    - PSUBSCRIBE support
+
+1.001     2017-12-11 05:38:20+08:00 Asia/Kuala_Lumpur
+    Dependencies:
+
+    - Added Test::HexString and Test::Deep to test deps list
+
+    New features:
+
+    - Support for MULTI transactions via ->multi method
+
+    Examples:
+
+    - `examples/job-worker.pl` - Simple list-based job queue
+    - `examples/multi.pl` - Transaction using MULTI
+
+1.000     2017-12-09 16:51:40+08:00 Asia/Kuala_Lumpur
+    First stable release. Note that there are some API changes, but
+    previous code should work mostly unmodified.
+
+    New features:
+
+    - Dropped Protocol::Redis in favour of local implementation
+    - Separated out commands into an autogenerated class to make
+    it easier to keep up to date with protocol changes
+    - Better support for subscriptions (see `examples/pub|sub.pl`)
+    - Dropped JSON::MaybeXS and Mixin::Event::Dispatch deps, events
+    are now handled through Ryu
+
+    Known issues:
+
+    - All data is assumed to be binary, callers need their own
+    Encode::encode()/::decode() calls - future versions are likely
+    to include an `->encoding` setting and/or `_utf8` versions of
+    string methods.
+
+0.003     2015-11-15 03:16:27+00:00 Europe/London
+    No new features.
+
+    Dependencies:
+
+    - Added List::Util 1.29, for pairmap
+
+0.002     2015-11-13 16:35:59+00:00 Europe/London
+    Bugs fixed:
+
+    - [RT107134](https://rt.cpan.org/Public/Bug/Display.html?id=107134) Include JSON::MaybeXS dependency
+
+0.001     2015-09-14 02:30:30+01:00 Europe/London
+    Initial CPAN release
