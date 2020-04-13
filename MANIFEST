@@ -21,6 +21,7 @@ examples/job-worker.pl
 examples/lrange.pl
 examples/moving-sum.pl
 examples/multi.pl
+examples/ping.pl
 examples/pub.pl
 examples/redis-cli
 examples/sub.pl
