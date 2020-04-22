@@ -3,7 +3,7 @@ package Net::Async::Redis::Subscription;
 use strict;
 use warnings;
 
-our $VERSION = '2.002_002'; # TRIAL VERSION
+our $VERSION = '2.002_003'; # TRIAL VERSION
 
 =head1 NAME
 
@@ -86,7 +86,8 @@ __END__
 
 =head1 AUTHOR
 
-Tom Molesworth <TEAM@cpan.org>
+Tom Molesworth C<< <TEAM@cpan.org> >> plus contributors as mentioned in
+L<Net::Async::Redis/CONTRIBUTORS>.
 
 =head1 LICENSE
 

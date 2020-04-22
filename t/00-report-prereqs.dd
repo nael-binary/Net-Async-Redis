@@ -42,6 +42,7 @@ do { my $x = {
                                       'Mixin::Event::Dispatch::Bus' => '2.000',
                                       'Ryu::Async' => '0.016',
                                       'Scalar::Util' => '0',
+                                      'Syntax::Keyword::Dynamically' => '0',
                                       'Syntax::Keyword::Try' => '0.11',
                                       'URI' => '0',
                                       'URI::redis' => '0',

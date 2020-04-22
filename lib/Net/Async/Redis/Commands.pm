@@ -3,7 +3,7 @@ package Net::Async::Redis::Commands;
 use strict;
 use warnings;
 
-our $VERSION = '2.002_002'; # TRIAL VERSION
+our $VERSION = '2.002_003'; # TRIAL VERSION
 
 =head1 NAME
 
