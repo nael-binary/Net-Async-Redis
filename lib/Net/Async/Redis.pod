@@ -380,6 +380,8 @@ tests and feedback:
 
 =item * C<@eyadof>
 
+=item * Nael Alolwani
+
 =back
 
 =head1 LICENSE

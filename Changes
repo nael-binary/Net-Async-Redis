@@ -1,5 +1,15 @@
 Revision history for Net-Async-Redis
 
+2.002_005 2020-04-29 02:50:10+08:00 Asia/Kuala_Lumpur (TRIAL RELEASE)
+    No new features.
+
+    Bugs fixed:
+
+    - the ->multi return value was a nested Future, changing the result
+    compared to previous versions - thanks to Nael for reporting
+    - subscribe/psubscribe interleaved with ping or other requests
+    could get confused about the pending queue
+
 2.002_004 2020-04-23 02:19:48+08:00 Asia/Kuala_Lumpur (TRIAL RELEASE)
     New features:
 

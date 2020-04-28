@@ -3,7 +3,7 @@ package Net::Async::Redis::Multi;
 use strict;
 use warnings;
 
-our $VERSION = '2.002_004'; # TRIAL VERSION
+our $VERSION = '2.002_005'; # TRIAL VERSION
 
 =head1 NAME
 
@@ -48,9 +48,7 @@ async sub exec {
                 ++$failure
             }
         }
-        return Future->done(
-            $success, $failure
-        )
+        return $success, $failure;
     } catch {
         my $err = $@;
         for my $queued (splice @{$self->{queued_requests}}) {
@@ -60,7 +58,7 @@ async sub exec {
                 $log->warnf("Failure during transaction: %s", $@);
             }
         }
-        return Future->fail($err);
+        die $@;
     }
 }
 
