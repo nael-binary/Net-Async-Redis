@@ -28,6 +28,7 @@ my @files = (
     't/00-report-prereqs.dd',
     't/00-report-prereqs.t',
     't/basic.t',
+    't/client_side_caching.t',
     't/cluster.t',
     't/hash_slot.t',
     't/multi.t',

@@ -1,5 +1,12 @@
 Revision history for Net-Async-Redis
 
+2.004_001 2020-06-01 06:46:51+08:00 Asia/Kuala_Lumpur (TRIAL RELEASE)
+    New features:
+
+    - initial client-side caching support for ->get calls,
+    pass client_side_caching_size => $size to enable.
+    Please note that this key is likely to change in a future version.
+
 2.004     2020-06-01 05:29:32+08:00 Asia/Kuala_Lumpur
     New features:
 

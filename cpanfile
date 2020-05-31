@@ -1,7 +1,7 @@
 requires 'parent', 0;
 requires 'curry', 0;
 requires 'Future', '>= 0.42';
-requires 'Future::AsyncAwait', '>= 0.34';
+requires 'Future::AsyncAwait', '>= 0.40';
 requires 'Syntax::Keyword::Try', '>= 0.11';
 requires 'IO::Async', 0;
 requires 'Ryu::Async', '>= 0.016';
@@ -11,6 +11,7 @@ requires 'URI', 0;
 requires 'URI::redis', 0;
 requires 'Class::Method::Modifiers', 0;
 requires 'Math::Random::Secure', 0;
+requires 'Cache::LRU';
 
 requires 'Digest::CRC', '>= 0.22';
 requires 'List::BinarySearch::XS', '>= 0.09';

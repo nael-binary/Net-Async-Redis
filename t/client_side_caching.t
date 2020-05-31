@@ -17,8 +17,8 @@ eval {
 
 my $loop = IO::Async::Loop->new;
 sub redis {
-    my ($msg) = @_;
-    $loop->add(my $redis = Net::Async::Redis->new);
+    my ($msg, %args) = @_;
+    $loop->add(my $redis = Net::Async::Redis->new(%args));
     is(exception {
         Future->needs_any(
             $redis->connect(
@@ -31,26 +31,20 @@ sub redis {
     return $redis;
 }
 
-my $subscriber = redis('subscriber');
-my $publisher = redis('publisher');
-is($publisher->publish('test::nowhere', 'message')->get, 0, 'have no subscribers on initial publish');
-isa_ok(my $sub = $subscriber->subscribe('test::somewhere')->get, 'Net::Async::Redis::Subscription');
-is(exception {
-    $subscriber->ping->get
-}, undef, 'can still ping after subscribe');
-like(exception {
-        note 'start';
-    $subscriber->get('test::random_key')->get;
-        note 'end';
-}, qr/pubsub/, 'but cannot GET while subscribed');
+my $main = redis('main connection', client_side_cache_size => 100);
+my $secondary = redis('secondary connection');
 
-$sub->events->each(sub {
-    note "Event - " . $_->payload;
-});
-is(exception {
-    $publisher->publish('test::somewhere' => 'example data')->get;
-}, undef, 'can publish without problems');
+use Future::AsyncAwait;
+(async sub {
+    # await $main->client_side_connection;
+    await $main->client_side_cache_ready;
+    my $f = $main->get('some_key');
+    ok(!($f->is_ready), '->get returns pending future');
+    $f->cancel;
+    await $main->set('some_key', 123);
+    is((await $main->get('some_key')), 123, 'key was set correctly');
+    ok($main->get('some_key')->is_done, '->get now returns immediate future');
+})->()->get;
 
 done_testing;
-
 
