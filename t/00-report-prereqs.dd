@@ -20,14 +20,13 @@ do { my $x = {
                                       'Test::More' => '0.96',
                                       'Test::NoTabs' => '0',
                                       'Test::Pod' => '1.41',
-                                      'Test::Pod::No404s' => '0',
                                       'Test::Portability::Files' => '0',
                                       'Test::Version' => '1'
                                     }
                     },
        'runtime' => {
                       'requires' => {
-                                      'Cache::LRU' => '0',
+                                      'Cache::LRU' => '0.04',
                                       'Class::Method::Modifiers' => '0',
                                       'Digest::CRC' => '0.22',
                                       'Future' => '0.42',

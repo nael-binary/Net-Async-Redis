@@ -9,7 +9,7 @@ use parent qw(
     IO::Async::Notifier
 );
 
-our $VERSION = '2.004_001';
+our $VERSION = '2.005';
 
 =head1 NAME
 
@@ -40,7 +40,7 @@ Net::Async::Redis - talk to Redis servers via L<IO::Async>
         print "Value: " . shift;
     })->get;
 
-    # ... or with Future::AsyncAwait
+    # ... or with Future::AsyncAwait (recommended)
     await $redis->connect;
     my $value = await $redis->get('some_key');
     $value ||= await $redis->set(some_key => 'some_value');
@@ -558,11 +558,14 @@ sub next_in_pipeline {
     my $depth = $self->pipeline_depth;
     until($depth and $self->{pending}->@* >= $depth) {
         return unless my $next = shift @{$self->{awaiting_pipeline}};
-        $log->tracef("Have free space in pipeline, sending %s", $next->[0]);
-        push @{$self->{pending}}, $next;
-        my $data = $self->protocol->encode_from_client($next->[0]);
+        my $cmd = join ' ', @{$next->[0]};
+        $log->tracef("Have free space in pipeline, sending %s", $cmd);
+        push @{$self->{pending}}, [ $cmd, $next->[1] ];
+        my $data = $self->protocol->encode_from_client(@{$next->[0]});
         $self->stream->write($data);
     }
+    # Ensure last ->write is in void context
+    return;
 }
 
 sub on_error_message {
@@ -738,7 +741,7 @@ sub execute_command {
         $log->tracef("Pipeline depth now %d/%d", 0 + @{$self->{pending}}, $depth);
         if($depth && $self->{pending}->@* >= $depth) {
             $log->tracef("Pipeline full, deferring %s (%d others in that queue)", $cmd, 0 + @{$self->{awaiting_pipeline}});
-            push @{$self->{awaiting_pipeline}}, [ $cmd, $f ];
+            push @{$self->{awaiting_pipeline}}, [ \@cmd, $f ];
             return $f;
         }
         my $data = $self->protocol->encode_from_client(@cmd);
@@ -823,13 +826,21 @@ sub configure {
         host
         port
         auth
-        uri
         pipeline_depth
         stream_read_len
         stream_write_len
         on_disconnect
     )) {
         $self->{$_} = delete $args{$_} if exists $args{$_};
+    }
+
+    # Be more lenient with the URI parameter, since it's tedious to
+    # need the redis:// prefix every time... after all, what else
+    # would we expect it to be?
+    if(exists $args{uri}) {
+        my $uri = delete $args{uri};
+        $uri = "redis://$uri" unless ref($uri) or $uri =~ /^redis:/;
+        $self->{uri} = $uri;
     }
     if(exists $args{client_side_cache_size}) {
         $self->{client_side_cache_size} = delete $args{client_side_cache_size};
