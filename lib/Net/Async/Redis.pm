@@ -9,7 +9,8 @@ use parent qw(
     IO::Async::Notifier
 );
 
-our $VERSION = '3.014';
+our $VERSION = '3.015';
+our $AUTHORITY = 'cpan:TEAM'; # AUTHORITY
 
 =head1 NAME
 
